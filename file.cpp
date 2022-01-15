@@ -1,5 +1,6 @@
 #include <vector>
 #include <list>
+// #include <iterator>
 #include "stdio.h"
 
 #define TRUE 1
@@ -21,7 +22,6 @@ graph gt;  // Transpose graph
 
 void printAdjList(std::list<int> l) {
     
-    size_t size = l.size();
     for (int v: l) {
         printf("[%d]->", v);
     }
@@ -45,7 +45,8 @@ void initializeGraphs(int numVertexes) {
 }
 
 void processInput(std::vector<int> &firstLine) {
-    int numVertexes, numEdges, v1, v2;
+    size_t numVertexes, numEdges;
+    int v1, v2;
 
     /* Read vertexes whose common ancestors are to be calculated */
     // // printf("Insira os dois vértices cujos antepassados comuns devem ser calculados: ");
@@ -56,7 +57,7 @@ void processInput(std::vector<int> &firstLine) {
 
     /* Read number of vertexes and edges of the graph */
     // // printf("Introduza o número de vértices e o número de arcos da árvore: ");
-    scanf("%d%d", &numVertexes, &numEdges);
+    scanf("%ld%ld", &numVertexes, &numEdges);
     // // printf("O número de vértices é %d e o número de arcos é %d\n", numVertexes, numEdges);
 
     /* Initialize graphs */
@@ -73,18 +74,24 @@ void processInput(std::vector<int> &firstLine) {
         gt.adjList[v2 - 1].push_back(v1);
     }
 
-    /*printf("###### Original Graph ######\n");
+    printf("###### Original Graph ######\n");
     printGraph(g);
     printf("###### Transpose Graph ######\n");
-    printGraph(gt);*/
+    printGraph(gt);
 }
 
 int DFSVisit(int u, std::vector<int> &colour, std::vector<int> &predecessor) {
     colour[u] = GRAY;
 
     int cycle = FALSE;
+    // size_t size = g.adjList[u].size();
+
+    // std::list<int>::iterator it;
+    // for (it = g.adjList[u].begin(); it != g.adjList[u].end(); it++) {
     for (int v: g.adjList[u]) {
-        if (colour[v] == WHITE) {
+        // int v = *it;
+
+        if (colour[v - 1] == WHITE) {
             predecessor[v - 1] = u + 1;
             cycle = DFSVisit(v - 1, colour, predecessor);
             
@@ -110,7 +117,7 @@ int DFSCycleDetection() {
 
 
     /* DFS Main cycle */
-    int numVertexes = g.adjList.size();
+    size_t numVertexes = g.adjList.size();
     int cycle = FALSE;
     for (size_t u = 0; u < numVertexes; u++) {
         if (colour[u] == WHITE) {
