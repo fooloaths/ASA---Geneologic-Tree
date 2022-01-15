@@ -85,6 +85,7 @@ int DFSVisit(int u, std::vector<int> &colour, std::vector<int> &predecessor) {
     int cycle = FALSE;
     for (int v: g.adjList[u]) {
         if (colour[v] == WHITE) {
+            predecessor[v - 1] = u + 1;
             cycle = DFSVisit(v - 1, colour, predecessor);
             
             if (cycle == TRUE) {
@@ -95,6 +96,8 @@ int DFSVisit(int u, std::vector<int> &colour, std::vector<int> &predecessor) {
             return TRUE;
         }
     }
+    colour[u] = BLACK;
+
     return FALSE;
 }
 
@@ -165,6 +168,7 @@ int main() {
     else {
         //Part 2
     }
+
 
     return 0;
 }
