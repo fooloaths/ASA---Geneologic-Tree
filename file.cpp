@@ -5,6 +5,10 @@
 #define TRUE 1
 #define FALSE 0
 #define MAX_NUMBER_OF_ANCESTORS 2
+#define WHITE 1
+#define GRAY 2
+#define BLACK 3
+#define NIL -1
 
 struct graph {
     std::vector<std::list<int>> adjList;
@@ -13,6 +17,7 @@ struct graph {
 
 graph g;   // Original graph
 graph gt;  // Transpose graph
+
 
 void printAdjList(std::list<int> l) {
     
@@ -32,28 +37,27 @@ void printGraph(graph t) {
     }
 }
 
-
 void initializeGraphs(int numVertexes) {
-    printf("O tamanho da adjList era %d ", g.adjList.size());
+    // // printf("O tamanho da adjList era %d ", g.adjList.size());
     g.adjList.resize(numVertexes);
     gt.adjList.resize(numVertexes);
-    printf("e agora é %d\n", g.adjList.size());
+    // // printf("e agora é %d\n", g.adjList.size());
 }
 
 void processInput(std::vector<int> &firstLine) {
     int numVertexes, numEdges, v1, v2;
 
     /* Read vertexes whose common ancestors are to be calculated */
-    printf("Insira os dois vértices cujos antepassados comuns devem ser calculados: ");
+    // // printf("Insira os dois vértices cujos antepassados comuns devem ser calculados: ");
     scanf("%d%d", &v1, &v2);
     firstLine.push_back(v1);
     firstLine.push_back(v2);
-    printf("Foram introduzidos os vértices %d e %d\n", v1, v2);
+    // // printf("Foram introduzidos os vértices %d e %d\n", v1, v2);
 
     /* Read number of vertexes and edges of the graph */
-    printf("Introduza o número de vértices e o número de arcos da árvore: ");
+    // // printf("Introduza o número de vértices e o número de arcos da árvore: ");
     scanf("%d%d", &numVertexes, &numEdges);
-    printf("O número de vértices é %d e o número de arcos é %d\n", numVertexes, numEdges);
+    // // printf("O número de vértices é %d e o número de arcos é %d\n", numVertexes, numEdges);
 
     /* Initialize graphs */
     initializeGraphs(numVertexes);
@@ -68,6 +72,53 @@ void processInput(std::vector<int> &firstLine) {
         /* Add edge to transpose graph */
         gt.adjList[v2 - 1].push_back(v1);
     }
+
+    /*printf("###### Original Graph ######\n");
+    printGraph(g);
+    printf("###### Transpose Graph ######\n");
+    printGraph(gt);*/
+}
+
+int DFSVisit(int u, std::vector<int> &colour, std::vector<int> &predecessor) {
+    colour[u] = GRAY;
+
+    int cycle = FALSE;
+    for (int v: g.adjList[u]) {
+        if (colour[v] == WHITE) {
+            cycle = DFSVisit(v - 1, colour, predecessor);
+            
+            if (cycle == TRUE) {
+                return TRUE;
+            }
+        }
+        else {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+
+int DFSCycleDetection() {
+
+    /* Setup DFS */
+    std::vector<int> colour = std::vector<int>(g.adjList.size(), WHITE);
+    std::vector<int> predecessor = std::vector<int>(g.adjList.size(), NIL);
+
+
+    /* DFS Main cycle */
+    int numVertexes = g.adjList.size();
+    int cycle = FALSE;
+    for (size_t u = 0; u < numVertexes; u++) {
+        if (colour[u] == WHITE) {
+            cycle = DFSVisit(u, colour, predecessor);
+            
+            if (cycle == TRUE) {
+                return TRUE;
+            }
+        }
+    }
+    return FALSE;
 }
 
 
@@ -89,6 +140,9 @@ int isGeneologicTree() {
     }
 
     /* Check for cycles */
+    if (DFSCycleDetection() == TRUE) {
+        return FALSE;
+    }
 
     return TRUE;
 }
@@ -106,14 +160,11 @@ int main() {
     isTree = isGeneologicTree();
 
     if (isTree == FALSE) {
-        printf("0");
+        printf("0\n");
     }
     else {
         //Part 2
     }
 
-
     return 0;
 }
-
-
