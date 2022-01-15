@@ -1,5 +1,6 @@
 #include <vector>
 #include <list>
+#include <queue>
 // #include <iterator>
 #include "stdio.h"
 
@@ -9,11 +10,12 @@
 #define WHITE 1
 #define GRAY 2
 #define BLACK 3
+#define RED 4
+#define BLUE 5
 #define NIL -1
 
 struct graph {
     std::vector<std::list<int>> adjList;
-
 };
 
 graph g;   // Original graph
@@ -74,10 +76,10 @@ void processInput(std::vector<int> &firstLine) {
         gt.adjList[v2 - 1].push_back(v1);
     }
 
-    printf("###### Original Graph ######\n");
+    /*printf("###### Original Graph ######\n");
     printGraph(g);
     printf("###### Transpose Graph ######\n");
-    printGraph(gt);
+    printGraph(gt);*/
 }
 
 int DFSVisit(int u, std::vector<int> &colour, std::vector<int> &predecessor) {
@@ -100,6 +102,8 @@ int DFSVisit(int u, std::vector<int> &colour, std::vector<int> &predecessor) {
             }
         }
         else {
+            /* If there is a black or gray vertex on the adjacency list,
+             * then the graph has at least 1 cycle and can't be a tree */
             return TRUE;
         }
     }
@@ -136,9 +140,9 @@ int isGeneologicTree() {
 
     size_t numVertexes = gt.adjList.size();
     for (size_t v = 0; v < numVertexes; v++) {
-        //Iterate over vertexes
+        /* Iterate over vertexes */
 
-        /* Number of incoming edges in g/ outgoing edges in gt */
+        /* Number of incoming edges in g = Number of outgoing edges in gt */
         int numEdges = gt.adjList[v].size();
         
         /* If the transpose graph has more outgoing edges than the maximum
@@ -157,11 +161,21 @@ int isGeneologicTree() {
     return TRUE;
 }
 
+
+void printLCA(std::vector<int> LCA) {
+    for (int u: LCA) {
+        printf("%d ", u);
+    }
+    printf("\n");
+}
+
+
 int main() {
-    int isTree;
+    int isTree, hasLCA;
     std::vector<int> firstLine = std::vector<int>(); // Vector with the 2 vertexes
                                                     // Whose common ancestor are to be calculated
 
+    std::vector<int> LCA = std::vector<int>();
 
     /* Proccess input */
     processInput(firstLine);
@@ -173,7 +187,12 @@ int main() {
         printf("0\n");
     }
     else {
-        //Part 2
+        /*if (hasLCA == findAllLCA(firstLine[0], firstLine[1])) {
+            printLCAs(LCA);
+        }
+        else {
+            printf("-\n");
+        }*/
     }
 
 
