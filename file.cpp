@@ -20,7 +20,6 @@ struct graph {
 };
 
 
-graph g;   // Original graph
 graph gt;  // Transpose graph
 
 void printAdjList(std::list<int> l) {
@@ -144,14 +143,13 @@ void printLCAs(std::vector<int> &LCA) {
 }
 
 void initializeGraphs(int numVertexes) {
-    g.adjList.resize(numVertexes);
     gt.adjList.resize(numVertexes);
 }
 
 void processInput(std::vector<int> &firstLine) {
     size_t numVertexes, numEdges;
     int v1, v2;
-    // int scanfResult;
+
     /* Read vertexes whose common ancestors are to be calculated */
     scanf("%d%d", &v1, &v2);
     firstLine.push_back(v1);
@@ -166,9 +164,6 @@ void processInput(std::vector<int> &firstLine) {
     for (size_t i = 0; i < numEdges; i++) {
         /* Read each edge from input */
         scanf("%d%d", &v1, &v2);
-
-        /* Add edge to original graph */
-        g.adjList[v1 - 1].push_back(v2);
         
         /* Add edge to transpose graph */
         gt.adjList[v2 - 1].push_back(v1);
@@ -199,13 +194,13 @@ int DFSVisit(graph g, std::vector<int> &colour, int v) {
 int DFSCycleDetection() {
 
     /* Setup DFS */
-    std::vector<int> colour = std::vector<int>(g.adjList.size(), WHITE);
+    std::vector<int> colour = std::vector<int>(gt.adjList.size(), WHITE);
     
     /* DFS Main cycle */
-    for (size_t v = 0; v < g.adjList.size(); v++) {
+    for (size_t v = 0; v < gt.adjList.size(); v++) {
         if (colour[v] == WHITE) {
 
-            if (DFSVisit(g, colour, v + 1) == TRUE) {
+            if (DFSVisit(gt, colour, v + 1) == TRUE) {
                 return TRUE;
             }
         }
