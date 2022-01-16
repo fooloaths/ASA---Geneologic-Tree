@@ -22,23 +22,6 @@ struct graph {
 
 graph gt;  // Transpose graph
 
-void printAdjList(std::list<int> l) {
-    
-    for (int v: l) {
-        printf("[%d]->", v);
-    }
-}
-
-void printGraph(graph t) {
-
-    size_t numVertexes = t.adjList.size();
-    for (size_t v = 0; v < numVertexes; v++) {
-        printf("%ld | ", v + 1);
-        printAdjList(t.adjList[v]);
-        printf("\n");
-    }
-}
-
 void BFS(graph t, std::vector<int> &colour, int v) {
 
     /* Initialize queue */
@@ -65,7 +48,6 @@ void BFS2(graph t, std::vector<int> &colour, int v) {
 
     /* Auxiliary vectors */
     auto lineage = std::vector<int>(gt.adjList.size(), NIL);
-    auto predecessor = std::vector<int>(gt.adjList.size(), NIL);
 
     /* Initialize queue */
     auto q = std::queue<int>();
@@ -96,11 +78,9 @@ void BFS2(graph t, std::vector<int> &colour, int v) {
                 /* Hasn't been explored yet */
                 colour[x - 1] = BLUE;
                 q.push(x);
-                predecessor[x - 1] = u;
             }
             else if (colour[x - 1] == BLACK) {
                 q.push(x);
-                predecessor[x - 1] = u;
                 if (lineage[u - 1] == NIL) {
                     colour[x - 1] = RED;
                 }
