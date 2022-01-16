@@ -1,7 +1,6 @@
 #include <vector>
 #include <list>
 #include <queue>
-#include <stack>
 #include "stdio.h"
 
 #define TRUE 1
