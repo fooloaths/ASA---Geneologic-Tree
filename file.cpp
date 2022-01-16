@@ -9,6 +9,7 @@
 #define FALSE 0
 #define MAX_NUMBER_OF_ANCESTORS 2
 #define WHITE 1
+#define VISITED 1
 #define GRAY 2
 #define BLACK 3
 #define RED 4
@@ -87,12 +88,35 @@ void BFS2(graph t, std::vector<int> &colour, std::vector<int> &BFSTree, int v) {
 
     /* Set v as root of the BFS tree */
     BFSTree[v - 1] = 0;
+    // // // // printf("O v é %d\n", v);
+
+    /* Check if v is itself a LCA */
+    if (colour[v - 1] == BLACK) {
+        colour[v - 1] = RED;
+        lineage[v - 1] = RED;
+    }
 
     /* BFS main loop */
     int level = 1;
     while (!q.empty()) {
         int u = q.front();
         q.pop();
+        // // printf("Tiramos da queue o vértice u = %d\n", u);
+        // // printf("A sua cor é ");
+        // // if (colour[u - 1] == WHITE) {
+        // //     printf("WHITE\n");
+        // // }
+        // // else if (colour[u - 1] == BLACK) {
+        // //     printf("BLACK\n");
+        // // }
+        // // else if (colour[u - 1] == BLUE) {
+        // //     printf("BLUE\n");
+        // // }
+        // // else if (colour[u - 1] == RED) {
+        // //     printf("RED\n");
+        // // }
+        // // printf("\n");
+        // // printf("gt.adj[%d] = ", u); printAdjList(gt.adjList[u - 1]); printf("\n");
 
         /* Iterate over adjacency list */
         for (int x: gt.adjList[u - 1]) {
@@ -131,7 +155,7 @@ int findAllLCA(int v1, int v2, std::vector<int> &LCAs) {
 
     // printf("11111\n");
     /* First BFS */
-    printGraph(gt);
+    // // // printGraph(gt);
     /*printf("Os vértices a comparar são o %d e %d\n", v1, v2);
     for (int u: gt.adjList[v1 - 1]) {
         printf("%d --- ", u);
@@ -143,22 +167,22 @@ int findAllLCA(int v1, int v2, std::vector<int> &LCAs) {
     // printf("33333\n");
 
     size_t size = colour.size();
-    // printf("Colour:\n");
-    // for (size_t j = 0; j < size; j++) {
-    //     printf("\tVértice %ld = ", j + 1);
-    //     if (colour[j] == RED) {
-    //         printf("RED\n");
-    //     }
-    //     else if (colour[j] == BLUE) {
-    //         printf("BLUE\n");
-    //     }
-    //     else if (colour[j] == BLACK) {
-    //         printf("BLACK\n");
-    //     }
-    //     else if (colour[j] == WHITE) {
-    //         printf("WHITE\n");
-    //     }
-    // }
+    // // // printf("Colour:\n");
+    // // // for (size_t j = 0; j < size; j++) {
+    // // //     printf("\tVértice %ld = ", j + 1);
+    // // //     if (colour[j] == RED) {
+    // // //         printf("RED\n");
+    // // //     }
+    // // //     else if (colour[j] == BLUE) {
+    // // //         printf("BLUE\n");
+    // // //     }
+    // // //     else if (colour[j] == BLACK) {
+    // // //         printf("BLACK\n");
+    // // //     }
+    // // //     else if (colour[j] == WHITE) {
+    // // //         printf("WHITE\n");
+    // // //     }
+    // // // }
     for (size_t i = 0; i < size; i++) {
         // printf("44444\n");
         if (colour[i] == RED) {
@@ -220,40 +244,97 @@ void processInput(std::vector<int> &firstLine) {
     printGraph(gt);*/
 }
 
-int DFSVisit(graph g, std::stack<int> q, std::vector<int> visited) {
-    for (int v: g.adjList[q.top() - 1]) {
-        if (visited[v - 1] == IN_STACK) {
+// // int DFSVisit(graph g, std::stack<int> &stack, std::vector<int> &visited) {
+// //     printf("DFSVisit: No topo da stack temos %d\n", stack.top());
+// //     for (int u: g.adjList[stack.top() - 1]) {
+// //         printf("O vértice u = %d é adjacente do vértice stack.top() = %d\n", u, stack.top());
+// //         if (visited[u - 1] == IN_STACK) {
+// //             return TRUE;
+// //         } else if (visited[u - 1] == NOT_VISITED) {
+// //             stack.push(u);
+// //             visited[u - 1] = IN_STACK;
+// //             DFSVisit(g, stack, visited);
+// //         }
+// //     }
+// //     visited[stack.top() - 1] = NOT_VISITED;
+// //     stack.pop();
+// //     return FALSE;
+// // }
+
+// // int DFSCycleDetection() {
+
+// //     /* Setup DFS */
+// //     std::vector<int> visited = std::vector<int>(g.adjList.size(), NOT_VISITED);
+    
+// //     /* DFS Main cycle */
+// //     for (int v = 0; v < g.adjList.size(); v++) {
+// //         if (visited[v] == NOT_VISITED) {
+// //             std::stack<int> stack = std::stack<int>();
+// //             printf("Loop principal: Vamos meter na stack o %d\n", v + 1);
+// //             stack.push(v + 1);
+// //             visited[v] = IN_STACK;
+// //             if (DFSVisit(g, stack, visited) == IN_STACK) {
+// //                 return TRUE;
+// //             }
+// //         }
+// //     }
+// //     return FALSE; 
+// // }
+
+
+int DFSVisit(graph g, std::vector<int> &colour, int v) {
+    int cycle = FALSE;
+    colour[v - 1] = GRAY;
+    // // printf("O vértice v = %d foi pintado de GRAY em v - 1 = %d\n", v, v-1);
+    // // printf("------\n"); printf("Colour:\n");
+    // // for (size_t i = 0; i < colour.size(); i++) {
+    // //     printf("\t%ld = ", i + 1);
+    // //     if (colour[i] == WHITE) {
+    // //         printf("WHITE");
+    // //     }
+    // //     else if (colour[i] == GRAY) {
+    // //         printf("GRAY");
+    // //     }
+    // //     else if (colour[i] == BLACK) {
+    // //         printf("BLACK");
+    // //     }
+    // //     printf("\n");
+    // // }
+
+    for (int u: g.adjList[v - 1]) {
+        // // printf("O vértice u = %d é adjacente do vértice source = %d\n", u, v);
+        if (colour[u - 1] == GRAY) {
+            /* Back edge found */
             return TRUE;
-        } else if (visited[v - 1] == NOT_VISITED) {
-            q.push(v - 1);
-            visited[v - 1] = IN_STACK;
-            DFSVisit(g, q, visited);
+        } else if (colour[u - 1] == WHITE) {
+            cycle = DFSVisit(g, colour, u);
+            
+            if (cycle == TRUE) {
+                return TRUE;
+            }
         }
     }
-    visited[q.top() - 1] = NIL;
-    q.pop();
+    colour[v - 1] = BLACK;
     return FALSE;
 }
 
 int DFSCycleDetection() {
 
     /* Setup DFS */
-    std::vector<int> visited = std::vector<int>(g.adjList.size(), NIL);
+    std::vector<int> colour = std::vector<int>(g.adjList.size(), WHITE);
     
     /* DFS Main cycle */
     for (int v = 0; v < g.adjList.size(); v++) {
-        if (visited[v - 1] == NOT_VISITED) {
-            std::stack<int> q;
-            q.push(v);
-            visited[v - 1] = IN_STACK;
-            if (DFSVisit(g, q, visited) == IN_STACK) {
+        if (colour[v] == WHITE) {
+            // // printf("Loop principal: Vamos explorar o %d\n", v + 1);
+
+            if (DFSVisit(g, colour, v + 1) == TRUE) {
                 return TRUE;
             }
         }
     }
     return FALSE; 
 }
-
 
 int isGeneologicTree() {
 
@@ -289,6 +370,7 @@ int main() {
 
     /* Proccess input */
     processInput(firstLine);
+    // // printGraph(g);
 
     /* Check if it is a geneologic tree */
     isTree = isGeneologicTree();
@@ -297,7 +379,7 @@ int main() {
         printf("0\n");
     }
     else {
-        if (hasLCA == findAllLCA(firstLine[0], firstLine[1], LCA)) {
+        if (hasLCA = findAllLCA(firstLine[0], firstLine[1], LCA)) {
             printLCAs(LCA);
         }
         else {
