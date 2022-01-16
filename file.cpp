@@ -40,17 +40,13 @@ void printGraph(graph t) {
     }
 }
 
-void BFS(graph t, std::vector<int> &colour, std::vector<int> &BFSTree, int v) {
+void BFS(graph t, std::vector<int> &colour, int v) {
 
     /* Initialize queue */
     auto q = std::queue<int>();
     q.push(v);
 
-    /* Set v as root of the BFS tree */
-    BFSTree[v - 1] = 0;
-
     /* BFS main loop */
-    int level = 1;
     while (!q.empty()) {
         int u = q.front();
         q.pop();
@@ -59,16 +55,14 @@ void BFS(graph t, std::vector<int> &colour, std::vector<int> &BFSTree, int v) {
             if (colour[x - 1] == WHITE) {
                 /* Hasn't been explored yet */
                 colour[x - 1] = GRAY;
-                BFSTree[x - 1] = level;
                 q.push(x);
             }
         }
-        level++;
         colour[u - 1] = BLACK;
     }
 }
 
-void BFS2(graph t, std::vector<int> &colour, std::vector<int> &BFSTree, int v) {
+void BFS2(graph t, std::vector<int> &colour, int v) {
 
     /* Auxiliary vectors */
     auto lineage = std::vector<int>(gt.adjList.size(), NIL);
@@ -77,9 +71,6 @@ void BFS2(graph t, std::vector<int> &colour, std::vector<int> &BFSTree, int v) {
     /* Initialize queue */
     auto q = std::queue<int>();
     q.push(v);
-
-    /* Set v as root of the BFS tree */
-    BFSTree[v - 1] = 0;
 
     /* Check if v is itself a LCA */
     if (colour[v - 1] == BLACK) {
@@ -91,7 +82,6 @@ void BFS2(graph t, std::vector<int> &colour, std::vector<int> &BFSTree, int v) {
     }
 
     /* BFS main loop */
-    int level = 1;
     while (!q.empty()) {
         int u = q.front();
         q.pop();
@@ -106,12 +96,10 @@ void BFS2(graph t, std::vector<int> &colour, std::vector<int> &BFSTree, int v) {
             if (colour[x - 1] == WHITE) {
                 /* Hasn't been explored yet */
                 colour[x - 1] = BLUE;
-                BFSTree[x - 1] = level;
                 q.push(x);
                 predecessor[x - 1] = u;
             }
             else if (colour[x - 1] == BLACK) {
-                BFSTree[x - 1] = level;
                 q.push(x);
                 predecessor[x - 1] = u;
                 if (lineage[u - 1] == NIL) {
@@ -124,7 +112,6 @@ void BFS2(graph t, std::vector<int> &colour, std::vector<int> &BFSTree, int v) {
 
             }
         }
-        level++;
     }
 }
 
@@ -132,14 +119,12 @@ int findAllLCA(int v1, int v2, std::vector<int> &LCAs) {
     // Find all LCA of v1 and v2
 
     auto colour = std::vector<int>(gt.adjList.size(), WHITE);
-    auto v1BFSTree = std::vector<int>(gt.adjList.size(), NIL);
-    auto v2BFSTree = std::vector<int>(gt.adjList.size(), NIL);
 
     /* First BFS */
-    BFS(gt, colour, v1BFSTree, v1);
+    BFS(gt, colour, v1);
 
     /* Second BFS */
-    BFS2(gt, colour, v2BFSTree, v2);
+    BFS2(gt, colour, v2);
 
     size_t size = colour.size();
     for (size_t i = 0; i < size; i++) {
@@ -147,7 +132,6 @@ int findAllLCA(int v1, int v2, std::vector<int> &LCAs) {
             LCAs.push_back(i + 1);
         }
     }
-
 
     return LCAs.size() > 0;
 }
