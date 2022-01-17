@@ -21,6 +21,13 @@ struct graph {
 
 
 graph gt;  // Transpose graph
+std::vector<int> colour;
+
+
+void initializeGraphs(int numVertexes) {
+    gt.adjList.resize(numVertexes);
+    colour.resize(numVertexes, WHITE);
+}
 
 void BFS(graph t, std::vector<int> &colour, int v) {
 
@@ -97,7 +104,14 @@ void BFS2(graph t, std::vector<int> &colour, int v) {
 int findAllLCA(int v1, int v2, std::vector<int> &LCAs) {
     // Find all LCA of v1 and v2
 
-    auto colour = std::vector<int>(gt.adjList.size(), WHITE);
+    // // auto colour = std::vector<int>(gt.adjList.size(), WHITE);
+    size_t size = colour.size();
+    for (size_t j = 0; j < size; j++) {
+        /* Repaint colour vector */
+        colour[j] = WHITE;
+    }
+
+    /* RE-SET COLOUR */
 
     /* First BFS */
     BFS(gt, colour, v1);
@@ -105,7 +119,7 @@ int findAllLCA(int v1, int v2, std::vector<int> &LCAs) {
     /* Second BFS */
     BFS2(gt, colour, v2);
 
-    size_t size = colour.size();
+    // // size_t size = colour.size();
     for (size_t i = 0; i < size; i++) {
         if (colour[i] == RED) {
             LCAs.push_back(i + 1);
@@ -120,10 +134,6 @@ void printLCAs(std::vector<int> &LCA) {
         printf("%d ", v);
     }
     printf("\n");
-}
-
-void initializeGraphs(int numVertexes) {
-    gt.adjList.resize(numVertexes);
 }
 
 void processInput(std::vector<int> &firstLine) {
@@ -174,7 +184,7 @@ int DFSVisit(graph &g, std::vector<int> &colour, int v) {
 int DFSCycleDetection() {
 
     /* Setup DFS */
-    std::vector<int> colour = std::vector<int>(gt.adjList.size(), WHITE);
+    // // // // std::vector<int> colour = std::vector<int>(gt.adjList.size(), WHITE);
     
     /* DFS Main cycle */
     for (size_t v = 0; v < gt.adjList.size(); v++) {
