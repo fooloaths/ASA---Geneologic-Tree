@@ -187,7 +187,6 @@ int processInput(std::vector<int> &firstLine) {
         /* Read each edge from input */
         scanf("%d%d", &v1, &v2);
         
-        // // // // printf("O v1 = %d e v2 = %d\n", v1, v2);
         /* Add edge to graph */
         if (gt.adjMatrix[v2 - 1][0] == 0) {
             gt.adjMatrix[v2 - 1][0] = v1;
@@ -197,7 +196,6 @@ int processInput(std::vector<int> &firstLine) {
         }
         else {
             /* Has more than two progenitors */
-            printf("oooo\n");
             return FALSE;
         }
 
@@ -210,9 +208,7 @@ int DFSVisit(graph &g, std::vector<int> &colour, int v) {
     int cycle = FALSE;
     colour[v - 1] = GRAY;
 
-    // // // // printf("Estamos no vértice v = %d\nVamos ver as suas adjacências na DFSvisit", v);
     for (int u: g.adjMatrix[v - 1]) {
-        // // // // printf("De momento temos u = %d\n", u);
         if (u == 0) {
             /* Reached end of v's adjacent vertexes */
             continue;
@@ -255,28 +251,10 @@ int isGeneologicTree(std::vector<int> &firstLine) {
     int lessThanThreeParents = TRUE;
 
     lessThanThreeParents = processInput(firstLine);
-    // // // printTable();
 
     if (lessThanThreeParents == FALSE) {
-        // // // printf("aaaaaaaaaa\n");
         return FALSE;
     }
-    // // size_t numVertexes = gt.numberOfVertices;
-    // // for (size_t v = 0; v < numVertexes; v++) {
-    // //     /* Iterate over vertexes */
-
-    // //     /* Number of incoming edges in g = Number of outgoing edges in gt */
-    // //     // // // int numEdges = gt.adjList[v].size();
-    // //     //TODO change this
-    // //     int numEdges = distance(gt.adjList[v].begin(), gt.adjList[v].end());
-        
-    // //     /* If the transpose graph has more outgoing edges than the maximum
-    // //      * number of progenitors, then the graph cannot represent a 
-    // //      * valid geneologic tree */
-    // //     if (numEdges > MAX_NUMBER_OF_ANCESTORS) {
-    // //         return FALSE;
-    // //     }
-    // // }
 
     /* Check for cycles */
     if (DFSCycleDetection() == TRUE) {
