@@ -18,15 +18,17 @@
 /* Represents a graph */
 struct graph {
     // std::vector<std::list<int>> adjList;
-    std::vector<std::forward_list<int>> adjList;
+    std::vector<std::vector<int>> adjMatrix;
+    size_t numberOfVertices = 0;
 };
 
 graph gt;  // Transpose graph
 std::vector<int> colour;
 
-
 void initializeGraphs(int numVertexes) {
-    gt.adjList.resize(numVertexes);
+    //TODO maybe resize instead of new one?
+    gt.adjMatrix = std::vector<std::vector<int>>(numVertexes, std::vector<int>(MAX_NUMBER_OF_ANCESTORS, 0));
+    gt.numberOfVertices = numVertexes;
     colour.resize(numVertexes, WHITE);
 }
 
@@ -41,7 +43,7 @@ void BFS(graph t, std::vector<int> &colour, int v) {
         int u = q.front();
         q.pop();
         /* Iterate over adjacency list */
-        for (int x: gt.adjList[u - 1]) {
+        for (int x: gt.adjMatrix[u - 1]) {
             if (colour[x - 1] == WHITE) {
                 /* Hasn't been explored yet */
                 colour[x - 1] = GRAY;
@@ -55,8 +57,8 @@ void BFS(graph t, std::vector<int> &colour, int v) {
 void BFS2(graph t, std::vector<int> &colour, int v) {
 
     /* Auxiliary vectors */
-    // // // auto lineage = std::vector<int>(gt.adjList.size(), NIL);
-    auto lineage = std::vector<bool>(gt.adjList.size(), false);
+    // // // auto lineage = std::vector<int>(gt.numberOfVertices, NIL);
+    auto lineage = std::vector<bool>(gt.numberOfVertices, false);
 
     /* Initialize queue */
     auto q = std::queue<int>();
@@ -78,7 +80,7 @@ void BFS2(graph t, std::vector<int> &colour, int v) {
         q.pop();
 
         /* Iterate over adjacency list */
-        for (int x: gt.adjList[u - 1]) {
+        for (int x: gt.adjMatrix[u - 1]) {
             // // // if (colour[x - 1] == RED && lineage[u - 1] == RED) {
             if (colour[x - 1] == RED && lineage[u - 1] == true) {
                 /* If vertex X is actually an ancestor of another LCA */
@@ -111,7 +113,7 @@ void BFS2(graph t, std::vector<int> &colour, int v) {
 int findAllLCA(int v1, int v2, std::vector<int> &LCAs) {
     // Find all LCA of v1 and v2
 
-    // // auto colour = std::vector<int>(gt.adjList.size(), WHITE);
+    // // auto colour = std::vector<int>(gt.numberOfVertices, WHITE);
     size_t size = colour.size();
     for (size_t j = 0; j < size; j++) {
         /* Repaint colour vector */
@@ -162,9 +164,14 @@ void processInput(std::vector<int> &firstLine) {
         /* Read each edge from input */
         scanf("%d%d", &v1, &v2);
         
-        /* Add edge to transpose graph */
-        // // // gt.adjList[v2 - 1].push_back(v1);
-        gt.adjList[v2 - 1].push_front(v1);
+        /* Add edge to graph */
+
+        if (gt.adjMatrix[v1 - 1][0] == 0) {
+            gt.adjMatrix[v1 - 1][0] = v2 - 1;
+        } else {
+            gt.adjMatrix[v1 - 1][1] = v2 - 1;
+        }
+
     }
 }
 
@@ -173,7 +180,7 @@ int DFSVisit(graph &g, std::vector<int> &colour, int v) {
     int cycle = FALSE;
     colour[v - 1] = GRAY;
 
-    for (int u: g.adjList[v - 1]) {
+    for (int u: g.adjMatrix[v - 1]) {
         if (colour[u - 1] == GRAY) {
             /* Back edge found */
             return TRUE;
@@ -192,10 +199,10 @@ int DFSVisit(graph &g, std::vector<int> &colour, int v) {
 int DFSCycleDetection() {
 
     /* Setup DFS */
-    // // // // std::vector<int> colour = std::vector<int>(gt.adjList.size(), WHITE);
+    // // // // std::vector<int> colour = std::vector<int>(gt.numberOfVertices, WHITE);
     
     /* DFS Main cycle */
-    for (size_t v = 0; v < gt.adjList.size(); v++) {
+    for (size_t v = 0; v < gt.numberOfVertices; v++) {
         if (colour[v] == WHITE) {
 
             if (DFSVisit(gt, colour, v + 1) == TRUE) {
@@ -208,12 +215,13 @@ int DFSCycleDetection() {
 
 int isGeneologicTree() {
 
-    size_t numVertexes = gt.adjList.size();
+    size_t numVertexes = gt.numberOfVertices;
     for (size_t v = 0; v < numVertexes; v++) {
         /* Iterate over vertexes */
 
         /* Number of incoming edges in g = Number of outgoing edges in gt */
         // // // int numEdges = gt.adjList[v].size();
+        //TODO change this
         int numEdges = distance(gt.adjList[v].begin(), gt.adjList[v].end());
         
         /* If the transpose graph has more outgoing edges than the maximum
@@ -237,7 +245,7 @@ int main() {
 
     /* Vector with the 2 vertexes
      * Whose common ancestor are to be calculated */
-    auto firstLine = std::vector<int>();
+    auto firstLine = std::vector<int>(2, 0);
 
     auto LCA = std::vector<int>();
 
