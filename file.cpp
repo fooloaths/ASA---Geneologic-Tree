@@ -1,5 +1,6 @@
 #include <vector>
-#include <list>
+// // #include <list>
+#include <forward_list>
 #include <queue>
 #include "stdio.h"
 
@@ -16,9 +17,9 @@
 
 /* Represents a graph */
 struct graph {
-    std::vector<std::list<int>> adjList;
+    // std::vector<std::list<int>> adjList;
+    std::vector<std::forward_list<int>> adjList;
 };
-
 
 graph gt;  // Transpose graph
 std::vector<int> colour;
@@ -54,7 +55,8 @@ void BFS(graph t, std::vector<int> &colour, int v) {
 void BFS2(graph t, std::vector<int> &colour, int v) {
 
     /* Auxiliary vectors */
-    auto lineage = std::vector<int>(gt.adjList.size(), NIL);
+    // // // auto lineage = std::vector<int>(gt.adjList.size(), NIL);
+    auto lineage = std::vector<bool>(gt.adjList.size(), false);
 
     /* Initialize queue */
     auto q = std::queue<int>();
@@ -63,7 +65,8 @@ void BFS2(graph t, std::vector<int> &colour, int v) {
     /* Check if v is itself a LCA */
     if (colour[v - 1] == BLACK) {
         colour[v - 1] = RED;
-        lineage[v - 1] = RED;
+        // // lineage[v - 1] = RED;
+        lineage[v - 1] = true;
     }
     else {
         colour[v - 1] = BLUE;
@@ -76,10 +79,12 @@ void BFS2(graph t, std::vector<int> &colour, int v) {
 
         /* Iterate over adjacency list */
         for (int x: gt.adjList[u - 1]) {
-            if (colour[x - 1] == RED && lineage[u - 1] == RED) {
+            // // // if (colour[x - 1] == RED && lineage[u - 1] == RED) {
+            if (colour[x - 1] == RED && lineage[u - 1] == true) {
                 /* If vertex X is actually an ancestor of another LCA */
                 colour[x - 1] = BLUE;
-                lineage[x - 1] = RED;
+                // // // lineage[x - 1] = RED;
+                lineage[x - 1] = true;
             }
             if (colour[x - 1] == WHITE) {
                 /* Hasn't been explored yet */
@@ -88,13 +93,15 @@ void BFS2(graph t, std::vector<int> &colour, int v) {
             }
             else if (colour[x - 1] == BLACK) {
                 q.push(x);
-                if (lineage[u - 1] == NIL) {
+                // // if (lineage[u - 1] == NIL) {
+                if (lineage[u - 1] == false) {
                     colour[x - 1] = RED;
                 }
                 else {
                     colour[x - 1] = BLUE;
                 }
-                lineage[x - 1] = RED;
+                // // // lineage[x - 1] = RED;
+                lineage[x - 1] = true;
 
             }
         }
@@ -156,7 +163,8 @@ void processInput(std::vector<int> &firstLine) {
         scanf("%d%d", &v1, &v2);
         
         /* Add edge to transpose graph */
-        gt.adjList[v2 - 1].push_back(v1);
+        // // // gt.adjList[v2 - 1].push_back(v1);
+        gt.adjList[v2 - 1].push_front(v1);
     }
 }
 
@@ -205,7 +213,8 @@ int isGeneologicTree() {
         /* Iterate over vertexes */
 
         /* Number of incoming edges in g = Number of outgoing edges in gt */
-        int numEdges = gt.adjList[v].size();
+        // // // int numEdges = gt.adjList[v].size();
+        int numEdges = distance(gt.adjList[v].begin(), gt.adjList[v].end());
         
         /* If the transpose graph has more outgoing edges than the maximum
          * number of progenitors, then the graph cannot represent a 
