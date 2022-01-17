@@ -151,7 +151,7 @@ void processInput(std::vector<int> &firstLine) {
 }
 
 
-int DFSVisit(graph g, std::vector<int> &colour, int v) {
+int DFSVisit(graph &g, std::vector<int> &colour, int v) {
     int cycle = FALSE;
     colour[v - 1] = GRAY;
 
@@ -214,7 +214,7 @@ int isGeneologicTree() {
 }
 
 int main() {
-    int isTree, hasLCA = 0;
+    int isTree  = TRUE, hasLCA = 0;
 
     /* Vector with the 2 vertexes
      * Whose common ancestor are to be calculated */
