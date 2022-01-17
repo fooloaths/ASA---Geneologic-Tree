@@ -23,7 +23,7 @@ struct graph {
 };
 
 graph gt;  // Transpose graph
-std::vector<int> colour;
+std::vector<char> colour;
 
 
 void printTable() {
@@ -44,7 +44,7 @@ void initializeGraphs(int numVertexes) {
     colour.resize(numVertexes, WHITE);
 }
 
-void BFS(graph t, std::vector<int> &colour, int v) {
+void BFS(graph t, std::vector<char> &colour, int v) {
 
     /* Initialize queue */
     auto q = std::queue<int>();
@@ -71,7 +71,7 @@ void BFS(graph t, std::vector<int> &colour, int v) {
     }
 }
 
-void BFS2(graph t, std::vector<int> &colour, int v) {
+void BFS2(graph t, std::vector<char> &colour, int v) {
 
     /* Auxiliary vectors */
     // // // auto lineage = std::vector<int>(gt.numberOfVertices, NIL);
@@ -204,7 +204,7 @@ int processInput(std::vector<int> &firstLine) {
 }
 
 
-int DFSVisit(graph &g, std::vector<int> &colour, int v) {
+int DFSVisit(graph &g, std::vector<char> &colour, int v) {
     int cycle = FALSE;
     colour[v - 1] = GRAY;
 
